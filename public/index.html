@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact Us</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f4f4; display:flex; justify-content:center; padding:40px; }
+  .card { background:#fff; padding:28px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); width:100%; max-width:420px; }
+  h2 { margin-top:0; }
+  label { display:block; margin-top:14px; font-size:14px; font-weight:bold; }
+  input, textarea { width:100%; padding:8px; margin-top:6px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; }
+  textarea { min-height:90px; resize:vertical; }
+  button { margin-top:18px; padding:10px 16px; background:#2563eb; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px; }
+  button:disabled { background:#93b4f0; cursor:default; }
+  #result { margin-top:14px; font-size:14px; }
+  #result.success { color:#166534; }
+  #result.error { color:#b91c1c; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2>Contact Us</h2>
+    <form id="contactForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+
+      <label for="message">Message</label>
+      <textarea id="message" required></textarea>
+
+      <button type="submit" id="submitBtn">Send message</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const resultBox = document.getElementById('result');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      resultBox.className = '';
+      resultBox.textContent = '';
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          resultBox.className = 'success';
+          resultBox.textContent = data.message;
+          form.reset();
+        } else {
+          resultBox.className = 'error';
+          resultBox.textContent = data.message || 'Something went wrong.';
+        }
+      } catch (err) {
+        resultBox.className = 'error';
+        resultBox.textContent = 'Network error. Is the server running?';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send message';
+      }
+    });
+  </script>
+</body>
+</html>
