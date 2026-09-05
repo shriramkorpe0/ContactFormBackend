@@ -218,7 +218,7 @@ Open `http://localhost:5000` after starting the server. Fill in the form and sub
 1. Push the project to GitHub (see below).
 2. Create a free account at https://render.com.
 3. Dashboard → **New** → **Web Service**.
-4. Connect your GitHub account and select the `BD_2_ContactFormBackend_BYTE` repository.
+4. Connect your GitHub account and select the `ContactFormBackend` repository.
 5. **Build command:** `npm install`
 6. **Start command:** `npm start`
 7. Add environment variables under the "Environment" tab (same keys as `.env.example`):
