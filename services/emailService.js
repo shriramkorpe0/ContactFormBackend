@@ -1,16 +1,20 @@
-const nodemailer = require('nodemailer');
-const AppError = require('../middleware/AppError');
+const nodemailer = require("nodemailer");
+const AppError = require("../middleware/AppError");
 
 // Nodemailer is a Node.js library that sends emails through an SMTP server.
 // Here we use Gmail's SMTP server. Gmail requires an "App Password" instead
 // of your normal account password when an app connects via SMTP like this
 // (see README.md for how to generate one).
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // false for port 587 (STARTTLS upgrades the connection)
+  requireTLS: true,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
+  connectionTimeout: 15000,
 });
 
 // Sends the contact form submission to CONTACT_RECEIVER.
@@ -29,14 +33,14 @@ const sendContactEmail = async ({ name, email, message }) => {
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Message:</strong></p>
       <p>${message}</p>
-    `
+    `,
   };
 
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error('Email sending failed:', error.message);
-    throw new AppError('Failed to send email notification', 500);
+    console.error("Email sending failed:", error.message);
+    throw new AppError("Failed to send email notification", 500);
   }
 };
 
